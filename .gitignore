@@ -34,6 +34,5 @@ configs/local
 models/
 build/
 data/
-decoder/
 checkpoints/
 videos/
