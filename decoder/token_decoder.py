@@ -8,7 +8,7 @@ import math
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 import torch.nn as nn
-import torchvision.transforms.functional as F
+import torchvision.transforms.functional as # Move both to CPUF
 from torch.utils.data import Dataset, DataLoader
 from torch.utils.data import random_split
 from datetime import datetime
@@ -161,7 +161,7 @@ train_dataset, test_dataset = random_split(dataset, [train_size, test_size])
 # Setup dataloader
 train_loader = DataLoader(
     train_dataset,
-    batch_size=8,
+    batch_size=1,
     shuffle=True,
     num_workers=os.cpu_count() // 2,   # try 8 or so
     pin_memory=True,                   # faster H2D copy
@@ -170,7 +170,7 @@ train_loader = DataLoader(
 
 test_loader = DataLoader(
     test_dataset,
-    batch_size=8,
+    batch_size=1,
     shuffle=False,
     num_workers=os.cpu_count() // 2,
     pin_memory=True,
@@ -178,7 +178,9 @@ test_loader = DataLoader(
 )
 # Grab pretrained VJEPA encoder
 encoder, _ = torch.hub.load("facebookresearch/vjepa2", "vjepa2_ac_vit_giant")
-encoder = encoder.to(device).eval()
+
+# encoder = encoder.to(device).eval()
+encoder = encoder.to("cuda:0").eval()
 
 # Define token parameters
 patch_size       = encoder.patch_size
